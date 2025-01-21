@@ -3,9 +3,9 @@ name = "markdown-flet-app"
 version = "0.1.0"
 description = ""
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10,<4.0"
 dependencies = [
-  "flet==0.25.2",
+  "flet (>=0.25.2,<0.26.0)",
   "markitdown==0.0.1a3"
 ]
 
@@ -27,3 +27,19 @@ copyright = "Copyright (C) 2024 by Flet"
 
 [tool.flet.app]
 path = "src"
+[tool.poetry]
+name = "markdown-flet-app"
+version = "0.1.0"
+description = ""
+authors = ["ushiro <ushiromukinohimitaine@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flet = "^0.25.2"
+markitdown = "^0.0.1a3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
