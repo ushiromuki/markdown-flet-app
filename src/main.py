@@ -1,22 +1,6 @@
 import flet as ft
-from pathlib import Path
-from markitdown import MarkItDown
 import asyncio
-import aiofiles
-
-class FileConversionStatus:
-    def __init__(self, filename: str):
-        self.filename = filename
-        self.progress = ft.ProgressBar(width=300, color="#1a73e8", value=0)
-        self.status = ft.Text(color="#1a73e8", size=14)
-        self.container = ft.Container(
-            content=ft.Column([
-                ft.Text(filename, size=14, color="#4a4a4a"),
-                self.progress,
-                self.status
-            ]),
-            margin=ft.margin.only(bottom=10)
-        )
+from application.conversion_service import ConversionService
 
 def main(page: ft.Page):
     page.title = "Markdown Converter"
@@ -31,55 +15,11 @@ def main(page: ft.Page):
     total_progress = ft.ProgressBar(width=400, color="#1a73e8", visible=False)
     total_status = ft.Text(color="#1a73e8")
 
-    async def convert_file(file_path: Path, status: FileConversionStatus):
-        try:
-            md_converter = MarkItDown()
-            result = md_converter.convert(file_path)
-            output_file = file_path.with_suffix('.md')
-            
-            async with aiofiles.open(output_file, 'w', encoding='utf-8') as f:
-                await f.write(result.text_content)
-            
-            status.progress.value = 1.0
-            status.status.value = "完了 ✅"
-        except Exception as ex:
-            status.status.value = f"エラー: {str(ex)} ❌"
-        finally:
-            status.progress.update()
-            status.status.update()
-
-    async def process_files(files):
-        total_progress.visible = True
-        total_progress.value = 0
-        total_status.value = "変換中..."
-        status_container.controls.clear()
-        
-        file_statuses = []
-        for file in files:
-            status = FileConversionStatus(Path(file.path).name)
-            file_statuses.append(status)
-            status_container.controls.append(status.container)
-        
-        status_container.update()
-        total_progress.update()
-        total_status.update()
-
-        tasks = [
-            convert_file(Path(file.path), status) 
-            for file, status in zip(files, file_statuses)
-        ]
-        
-        for i, task in enumerate(asyncio.as_completed(tasks)):
-            await task
-            total_progress.value = (i + 1) / len(tasks)
-            total_progress.update()
-
-        total_status.value = "すべての変換が完了しました 🎉"
-        total_status.update()
+    conversion_service = ConversionService()
 
     def pick_files_result(e: ft.FilePickerResultEvent):
         if e.files:
-            asyncio.run(process_files(e.files))
+            asyncio.run(conversion_service.process_files(e.files, status_container, total_progress, total_status))
 
     file_picker.on_result = pick_files_result
 
@@ -126,7 +66,6 @@ def main(page: ft.Page):
                     border=ft.border.all(1, "#e0e0e0"),
                     border_radius=5,
                     padding=10,
-                    
                 ),
             ]),
             padding=40,
