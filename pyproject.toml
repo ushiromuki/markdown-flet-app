@@ -6,7 +6,11 @@ readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dependencies = [
   "flet (>=0.25.2,<0.26.0)",
-  "markitdown==0.0.1a3"
+  "markitdown==0.0.1a3",
+  "aiofiles==24.1.0",
+  "pypdf==5.3.0",
+  "pikepdf==9.5.2",
+  "pillow==11.1.0"
 ]
 
 
@@ -40,6 +44,9 @@ flet = "^0.25.2"
 markitdown = "^0.0.1a3"
 pytest = "^8.3.4"
 aiofiles = "^24.1.0"
+pypdf = "^5.3.0"
+pikepdf = "^9.5.2"
+pillow = "^11.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
